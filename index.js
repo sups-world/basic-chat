@@ -8,8 +8,11 @@ const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 import path from "path";
 
 import http from "http";
-const server = http.createServer(app);
+const serVer = http.createServer(app);
 //inside server we loaded the object app
+
+import { Server } from "socket.io";
+const io = new Server(serVer);
 
 const dirPath = path.join(__dirname, "./public/index.html");
 app.get("/", (req, res) => {
@@ -17,6 +20,12 @@ app.get("/", (req, res) => {
   res.sendFile(dirPath);
 });
 
-server.listen(3000, () => {
+io.on("connection", (socket) => {
+  socket.on("chat message", (msg) => {
+    console.log("message::", msg);
+  });
+});
+
+serVer.listen(3000, () => {
   console.log(`server listening of port 3000`);
 });
